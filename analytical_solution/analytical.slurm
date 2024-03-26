@@ -1,9 +1,9 @@
 #!/bin/bash
 # HEADER for Parallel job using 1 processors:
 #SBATCH --nodes=1           # number of nodes
-#SBATCH --ntasks-per-node=1  # number of processors per node
+#SBATCH --ntasks-per-node=8  # number of processors per node
 #SBATCH --cpus-per-task=1       # number of cpus per task
-#SBATCH -t 00:01:00      # run for 1 hr max
+#SBATCH -t 00:05:00      # run for 1 hr max
 # #SBATCH --mail-type=begin   # send email when process begins...
 # #SBATCH --mail-type=end     # ...and when it ends...
 # #SBATCH --mail-type=fail    # ...or when it fails.
@@ -24,7 +24,7 @@ export NTASKS=$(echo "$SLURM_NNODES*$(echo $SLURM_TASKS_PER_NODE | cut -d '(' -f
 # Record the start time
 start_time=$(date +%s.%N)
 
-matlab -singleCompThread -nodisplay -nosplash -r test_X
+matlab -nodisplay -nosplash -r test_X
 
 
 # Record the end time
