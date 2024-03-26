@@ -10,12 +10,7 @@ For product information, visit www.mathworks.com.
  
 Starting parallel pool (parpool) using the 'Processes' profile ...
 Connected to parallel pool with 8 workers.
- 
-Starting program with:
-Number of workers: 8
- 
-[Warning: Cannot set Renderer to OpenGL on this figure.] 
-[> In test_X (line 40)] 
+Elapsed time is 27.510199 seconds.
 Parallel pool using the 'Processes' profile is shutting down.
 
-Elapsed time: 00:01:13
+Elapsed time: 00:00:48

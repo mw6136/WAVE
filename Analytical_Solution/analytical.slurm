@@ -15,6 +15,7 @@
 # Load required modules
 module purge
 module load matlab/R2023b
+module load anaconda3/2023.9 
 
 # Set number of openmp threads and number of MPI tasks
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
@@ -24,18 +25,25 @@ export NTASKS=$(echo "$SLURM_NNODES*$(echo $SLURM_TASKS_PER_NODE | cut -d '(' -f
 # Record the start time
 start_time=$(date +%s.%N)
 
-matlab -nodisplay -nosplash -r test_X
+# delete all current images and data but keep directories
+rm -r ./images
+mkdir images
+rm -r ./data
+mkdir data
+
+
+matlab -nodisplay -nosplash -r analytical_solution
+python ./images2gif.py
+
+
 
 
 # Record the end time
 end_time=$(date +%s.%N)
-
 # Calculate the elapsed time in seconds
 elapsed_seconds=$(echo "$end_time - $start_time" | bc)
-
 # Extract the integer part of the elapsed time
 integer_part=$(echo "$elapsed_seconds" | cut -d '.' -f 1)
-
 # Convert the integer part to hh:mm:ss format
 hours=$(printf "%02d" $(echo "$integer_part / 3600" | bc))
 minutes=$(printf "%02d" $(echo "($integer_part / 60) % 60" | bc))
