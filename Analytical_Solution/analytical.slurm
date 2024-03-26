@@ -1,9 +1,9 @@
 #!/bin/bash
 # HEADER for Parallel job using 1 processors:
 #SBATCH --nodes=1           # number of nodes
-#SBATCH --ntasks-per-node=8  # number of processors per node
+#SBATCH --ntasks-per-node=32  # number of processors per node
 #SBATCH --cpus-per-task=1       # number of cpus per task
-#SBATCH -t 00:05:00      # run for 1 hr max
+#SBATCH -t 01:00:00      # run for 1 hr max
 # #SBATCH --mail-type=begin   # send email when process begins...
 # #SBATCH --mail-type=end     # ...and when it ends...
 # #SBATCH --mail-type=fail    # ...or when it fails.

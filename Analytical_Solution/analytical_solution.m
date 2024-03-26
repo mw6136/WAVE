@@ -11,7 +11,7 @@ end_time = 1;
 number_of_timesteps = 3;
 
 % ensure that this number can multiply by some integer and exacly equal 2
-grid_spacing = 0.5;
+grid_spacing = 0.01;
 
 make_images = true;
 make_video = false;
@@ -63,10 +63,6 @@ writematrix(round(Z_3D, num_digits), './data/Z_3D_data.txt', 'WriteMode', 'appen
 writematrix(round(X, num_digits), './data/X_data.txt', 'WriteMode', 'append', 'Delimiter', 'tab');
 writematrix(round(Y, num_digits), './data/Y_data.txt', 'WriteMode', 'append', 'Delimiter', 'tab');
 writematrix(round(times, num_digits), './data/times_data.txt', 'WriteMode', 'append', 'Delimiter', 'tab');
-
-writematrix(X,'X_data.txt');
-writematrix(Y,'Y_data.txt');
-writematrix(times,'times.txt');
 
 
 %%%%%%%%% video %%%%%%%%%%%%%%%%%%

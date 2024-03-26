@@ -9,8 +9,4 @@ To get started, type doc.
 For product information, visit www.mathworks.com.
  
 Starting parallel pool (parpool) using the 'Processes' profile ...
-Connected to parallel pool with 8 workers.
-Elapsed time is 27.510199 seconds.
-Parallel pool using the 'Processes' profile is shutting down.
-
-Elapsed time: 00:00:48
+Connected to parallel pool with 32 workers.
