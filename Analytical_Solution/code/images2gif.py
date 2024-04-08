@@ -1,9 +1,16 @@
 #!/usr/bin/env python
 
 import imageio
+import os
 
-# hardcoded ...
-number_of_timesteps = 101
+next_one_exists = True
+number_of_timesteps = 0
+while next_one_exists:
+    to_check = number_of_timesteps + 1
+    next_one_exists = os.path.isfile('../images/2D/' + str(to_check) + '_2D.png')
+    if next_one_exists:
+        number_of_timesteps += 1
+
 duration_of_each_image = 100 # miliseconds
 
 

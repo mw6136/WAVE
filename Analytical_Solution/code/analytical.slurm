@@ -3,7 +3,7 @@
 #SBATCH --nodes=1           # number of nodes
 #SBATCH --ntasks-per-node=32  # number of processors per node
 #SBATCH --cpus-per-task=1       # number of cpus per task
-#SBATCH -t 12:00:00      # run for 1 hr max
+#SBATCH -t 08:30:00      # run for 1 hr max
 #SBATCH --mail-type=begin   # send email when process begins...
 #SBATCH --mail-type=end     # ...and when it ends...
 #SBATCH --mail-type=fail    # ...or when it fails.
@@ -25,15 +25,11 @@ export NTASKS=$(echo "$SLURM_NNODES*$(echo $SLURM_TASKS_PER_NODE | cut -d '(' -f
 # Record the start time
 start_time=$(date +%s.%N)
 
-# delete all current images and data but keep directories
-rm -r ../images
-mkdir images
-mkdir images/2D
-mkdir images/3D
 
 
 
-matlab -nodisplay -nosplash -r analytical_solution
+
+matlab -nodisplay -nosplash -r polar_analytical_solution
 python ./images2gif.py
 
 
