@@ -1,4 +1,4 @@
-clearvars,clf %,clc
+clearvars,clf,clc
 tic
 
 
@@ -15,24 +15,29 @@ make_images = true;
 %%%%%%% END USER INPUTS %%%%%%%%%%
 
 N = 200;
-rs = linspace(0,1,N);
-thetas = linspace(0,2*pi,N);
 
-[thetas,rs] = meshgrid(thetas,rs);
+rs_linspace = linspace(0,1,N);
+thetas_linspace = linspace(0,2*pi,N);
+
+[thetas,rs] = meshgrid(thetas_linspace,rs_linspace);
 
 % Deleting previous results, be careful
 % useful if you create fewer images this time than previously
 % also the data might just append to the text files?
 delete ../data/*
-delete ../images/*
+delete ../images/2D/*
+delete ../images/3D/*
 
 
-% PDE constants
+
+% PDE  (and other) constants
 % like, we could change these, but let's keep them as this unless we have a good reason
 R = 1;
 A = 1;
 c = 1;
 w = 1;
+
+resolution_dpi = 300;
 
 
 % zeros of first order bessel function of the first kind
@@ -50,26 +55,46 @@ Z_3D = zeros(length(rs), length(thetas), length(times));
 parfor i = 1:length(times)
     time = times(i);
     Z_3D(:,:,i) = phi_all(rs,thetas,time,R,A,c,w,z1m);
-    save('../data/data' + string(i) + '.mat')
+    %save('../data/data' + string(i) + '.mat','-formstruct',s)
+    % https://www.mathworks.com/help/parallel-computing/save-variables-in-parfor-loop.html
 
     % plotting and saving images
     if make_images
+        % 2D
+        figure()
+        h = pcolor(X,Y,Z_3D(:,:,i));
+        set(h, 'EdgeColor', 'none');
+        axis square
+        colorbar();
+        caxis([-6 6])
+        xlabel("X")
+        ylabel("Y")
+        title("time = " + string(times(i)))
+        set(gca,'FontSize',13)
+        exportgraphics(gcf,"../images/2D/" + string(i) + '_2D.png','Resolution',resolution_dpi)
+
+        % 3D
         figure('Renderer','zbuffer')
         hSurf = surf(X,Y,Z_3D(:,:,i));
-        set(hSurf, 'EdgeAlpha',.05)
+        set(hSurf, 'EdgeAlpha',0.05)
         axis tight;    %# fix axis limits
         zlim([-6 6])
-        exportgraphics(gcf,"../images/" + string(i) + '.png','Resolution',600)
+        title("time = " + string(times(i)))
+        exportgraphics(gcf,"../images/3D/" + string(i) + '_3D.png','Resolution',resolution_dpi)
     end
 end
 
 % saving the data
 num_digits = 20;
-writematrix(round(Z_3D, num_digits), '../data/Z_3D_data.txt', 'WriteMode', 'append', 'Delimiter', 'tab');
+%writematrix(round(Z_3D, num_digits), '../data/Z_3D_data.txt', 'WriteMode', 'append', 'Delimiter', 'tab');
 writematrix(round(rs, num_digits), '../data/r_data.txt', 'WriteMode', 'append', 'Delimiter', 'tab');
 writematrix(round(thetas, num_digits), '../data/theta_data.txt', 'WriteMode', 'append', 'Delimiter', 'tab');
-writematrix(round(times, num_digits), '../data/times_data.txt', 'WriteMode', 'append', 'Delimiter', 'tab');
+writematrix(round(times, num_digits), '../data/times.txt', 'WriteMode', 'append', 'Delimiter', 'tab');
 
+for i = 1:length(times)
+    Z = Z_3D(:,:,i);
+    writematrix(round(Z, num_digits), '../data/Z' + string(i) + '.txt', 'WriteMode', 'append', 'Delimiter', 'tab');
+end
 
 %%%%%%%%% video %%%%%%%%%%%%%%%%%%
 
