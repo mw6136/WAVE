@@ -10,11 +10,13 @@ start_time = 0;
 end_time = 0.5;
 number_of_timesteps = 51;
 
+N = 200; % the number of points to discretize both r and theta into
+
 make_images = true;
 
 %%%%%%% END USER INPUTS %%%%%%%%%%
 
-N = 200;
+
 
 rs_linspace = linspace(0,1,N);
 thetas_linspace = linspace(0,2*pi,N);
