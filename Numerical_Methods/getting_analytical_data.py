@@ -3,7 +3,7 @@ import numpy as np
 
 ############# doc ############
 """
-The result of this code is 6 np arrays: `times`, `rs_linspace`, `thetas_linspace`,
+The result of this function is 6 np arrays: `times`, `rs_linspace`, `thetas_linspace`,
 `rs`, `thetas`, and `Z`, as well as the variable N.
 
 No variables are hardcoded in this (execept the relative paths).
