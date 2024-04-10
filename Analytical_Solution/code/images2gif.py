@@ -3,6 +3,7 @@
 import imageio
 import os
 
+# finding how many timesteps (images) exist
 next_one_exists = True
 number_of_timesteps = 0
 while next_one_exists:
