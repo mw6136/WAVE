@@ -2,6 +2,7 @@
 
 import imageio
 import os
+import tqdm
 
 # finding how many timesteps (images) exist
 next_one_exists = True
@@ -25,12 +26,12 @@ for i in list(range(number_of_timesteps)):
 
 # 2D
 with imageio.get_writer('../analytical_solution_2D.gif', mode='I', duration=duration_of_each_image) as writer:
-    for filename in filenames_2D:
+    for filename in tqdm(filenames_2D):
         image = imageio.imread(filename)
         writer.append_data(image)
 
 # 3D
 with imageio.get_writer('../analytical_solution_3D.gif', mode='I', duration=duration_of_each_image) as writer:
-    for filename in filenames_3D:
+    for filename in tqdm(filenames_3D):
         image = imageio.imread(filename)
         writer.append_data(image)

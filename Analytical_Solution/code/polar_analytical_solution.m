@@ -7,7 +7,7 @@ tic
 %%%%%%% USER INPUTS %%%%%%%%%%
 
 start_time = 0;
-end_time = 0.5;
+end_time = 6.5;
 number_of_timesteps = 651;
 
 N = 200; % the number of points to discretize both r and theta into
