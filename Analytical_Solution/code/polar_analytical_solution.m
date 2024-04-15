@@ -8,7 +8,7 @@ tic
 
 start_time = 0;
 end_time = 0.5;
-number_of_timesteps = 51;
+number_of_timesteps = 651;
 
 N = 200; % the number of points to discretize both r and theta into
 
@@ -85,6 +85,7 @@ parfor i = 1:length(times)
         exportgraphics(gcf,"../images/3D/" + string(i) + '_3D.png','Resolution',resolution_dpi)
     end
 end
+
 
 % saving the data
 num_digits = 20;
