@@ -6,7 +6,7 @@ R = 1.0
 A = 1.0
 omega = 1.0
 c = 1.0
-tmax = 1
+tmax = 0.5
 
 #create grid size
 num_r = 100  # Number of radial grid points

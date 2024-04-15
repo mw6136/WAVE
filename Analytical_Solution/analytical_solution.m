@@ -6,23 +6,6 @@ tic
 
 %%%%%%% USER INPUTS %%%%%%%%%%
 
-start_time = 0;
-end_time = 1;
-number_of_timesteps = 3;
-
-% ensure that this number can multiply by some integer and exacly equal 2
-grid_spacing = 0.01;
-
-make_images = true;
-make_video = false;
-
-%%%%%%% END USER INPUTS %%%%%%%%%%
-
-
-
-
-
-
 % PDE constants
 % like, we could change these, but let's keep them as this unless we have a good reason
 R = 1;
@@ -30,28 +13,55 @@ A = 1;
 c = 1;
 w = 1;
 
+start_time = 0;
+end_time = 1;
+num_t = 1;
+num_r = 50;
+num_theta = 50;
 
+make_images = true;
+make_video = false;
 
+%%%%%%% END USER INPUTS %%%%%%%%%%
 
 % zeros of first order bessel function of the first kind
 z1m = [3.83171, 7.01559, 10.1735, 13.3237, 16.4706, 19.6159, 22.7601, 25.9037, 29.0468, 32.1897, 35.3323, 38.4748, 41.6171, 44.7593, 47.9015, 51.0435, 54.1856, 57.3275, 60.4695, 63.6114, 66.7532, 69.8951, 73.0369, 76.1787, 79.3205, 82.4623, 85.604, 88.7458, 91.8875, 95.0292, 98.171, 101.313, 104.454, 107.596, 110.738, 113.879, 117.021, 120.163, 123.304, 126.446, 129.588, 132.729, 135.871, 139.013, 142.154, 145.296, 148.438, 151.579, 154.721, 157.863, 161.004, 164.146, 167.288, 170.429, 173.571, 176.712, 179.854, 182.996, 186.137, 189.279, 192.421, 195.562, 198.704];
 
 
 % setting up geometry and time
-[X,Y] = meshgrid(-1:grid_spacing:1);
-times = linspace(start_time,end_time,number_of_timesteps);
-Z_3D = zeros(length(X), length(X), length(times));
+dt = end_time/num_t;
+dr = R/(num_r);
+dtheta = 2 * pi / num_theta;
+
+times = 0:dt:end_time;
+r = 0:dr:R;
+theta = 0:dtheta:2*pi;
+
+
+Z_3D = zeros(length(r), length(theta), length(times));
 
 % solving for all timesteps
-parfor i = 1:length(times)
+for i = 1:length(times)
     time = times(i);
-    Z_3D(:,:,i) = phi_all(X,Y,time,R,A,c,w,z1m);
+    Z_3D(:,:,i) = phi_all(r,theta,time,R,A,c,w,z1m);
 
+
+    [R_grid, Theta_grid] = meshgrid(linspace(0, R, num_r+1), linspace(0, 2 * pi, num_theta+1));
+    X = R_grid .* cos(Theta_grid);
+    Y = R_grid .* sin(Theta_grid);
+    contourf(X, Y, Z_3D(:,:,1), 50)
+    colormap('parula');
+    colorbar;
     % plotting and saving images
     if make_images
+        X = r .* cos(theta);
+        Y = r .* sin(theta)';
         figure('Renderer','zbuffer')
         hSurf = surf(X,Y,Z_3D(:,:,i));
         axis tight;    %# fix axis limits
+        xlabel('x')
+        ylabel('y')
+        zlabel('z')
         zlim([-6 6])
         exportgraphics(gcf,"./images/" + string(i) + '.png','Resolution',600)
     end
@@ -60,8 +70,8 @@ end
 % saving the data
 num_digits = 20;
 writematrix(round(Z_3D, num_digits), './data/Z_3D_data.txt', 'WriteMode', 'append', 'Delimiter', 'tab');
-writematrix(round(X, num_digits), './data/X_data.txt', 'WriteMode', 'append', 'Delimiter', 'tab');
-writematrix(round(Y, num_digits), './data/Y_data.txt', 'WriteMode', 'append', 'Delimiter', 'tab');
+writematrix(round(r, num_digits), './data/r_data.txt', 'WriteMode', 'append', 'Delimiter', 'tab');
+writematrix(round(theta, num_digits), './data/theta_data.txt', 'WriteMode', 'append', 'Delimiter', 'tab');
 writematrix(round(times, num_digits), './data/times_data.txt', 'WriteMode', 'append', 'Delimiter', 'tab');
 
 
@@ -119,30 +129,20 @@ toc
 
 %%%%%%%%%%%%%%% functions that solve it %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function Z = phi_all(X, Y, t, R, A, c, w, z1m)
+function Z = phi_all(r, theta, t, R, A, c, w, z1m)
 
-total_elem = length(X)^2;
-Z = zeros(size(X));
+Z = zeros(length(r),length(theta));
 
-    % redefine z for new t
-    parfor i = 1:total_elem
-        r = sqrt(X(i)^2 + Y(i)^2);
-        theta = atan2(Y(i), X(i));
-        
-        % TEMPORARY THETA FILTER
-        %{
-        if (theta > pi/2 || theta < 0)
-            Z(i) = nan;
-            % end temp section
-        else
-        %}
-        if r > R
-            Z(i) = nan;
-        else
-            Z(i) = phi_indv(r, theta, t, R, A, c, w, z1m);
+    fprintf('Progress:     0%%');
+    for i = 1:length(r)
+        for j = 1:length(theta)
+            Z(i,j) = phi_indv(r(i), theta(j), t, R, A, c, w, z1m);
         end
+        progress = i / length(r) * 100;
+        fprintf('\b\b\b\b%3.0f%%', progress);
     end
-
+    
+    fprintf('\n');
 end
 
 

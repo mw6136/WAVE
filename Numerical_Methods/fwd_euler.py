@@ -28,14 +28,14 @@ def fwd_euler(R, A, omega, c, tmax, num_timesteps, num_r, num_theta):
     for n in tqdm(range(1, num_timesteps + 1)):
 
         # Update phi using forward Euler method
-        for i in range(1, num_r - 1):
+        for i in range(2, num_r - 1):
             for j in range(num_theta):
                 # Spatial derivatives
                 d2phi_dr2 = (phi_curr[i + 1, j] - 2 * phi_curr[i, j] + phi_curr[i - 1, j]) / (dr ** 2)
                 d2phi_dtheta2 = (phi_curr[i, (j + 1) % num_theta] - 2 * phi_curr[i, j] + phi_curr[i, (j - 1) % num_theta]) / (dtheta ** 2)
 
                 # Temporal derivative
-                d2phi_dt2 = c ** 2 * (d2phi_dr2 + 1 / i*2 * d2phi_dtheta2)
+                d2phi_dt2 = c ** 2 * (d2phi_dr2 + 1 / (dr*i)**2 * d2phi_dtheta2)
 
                 # Update phi using forward Euler method
                 phi_next = 2 * phi_curr[i, j] - phi_prev[i, j] + dt ** 2 * d2phi_dt2
@@ -53,8 +53,10 @@ def fwd_euler(R, A, omega, c, tmax, num_timesteps, num_r, num_theta):
     Y = R_grid * np.sin(Theta_grid)
 
     plt.figure(figsize=(8, 6))
-    plt.contourf(X, Y, phi_curr.T, levels = 100, cmap='viridis')
-    plt.colorbar(label='Deformation')
+    contour = plt.contourf(X, Y, phi_curr.T, levels=100, cmap='viridis')
+    colorbar = plt.colorbar(contour)
+    colorbar.set_label('Deformation')
+    contour.set_clim(-6, 6)  # Set colorbar limits to -6 to 6
     plt.title('Deformation')
     plt.xlabel('X')
     plt.ylabel('Y')
