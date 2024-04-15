@@ -19,16 +19,20 @@ def fwd_euler(R, A, omega, c, tmax, num_timesteps, num_r, num_theta):
     # Initial condition: phi(r, theta, t=0) = 0
     phi_curr[:, :] = 0
 
-    # Boundary condition: phi(r=0, theta, t) is finite
-    phi_curr[0, :] = 0
     phi_tot = []
     phi_tot.append(phi_curr)
 
     # Time-stepping loop
     for n in tqdm(range(1, num_timesteps + 1)):
+        #Apply BC: phi(r=0, theta, t) is finite
+        phi_curr[0,:] = 0
 
-        # Update phi using forward Euler method
+        # Boundary condition: phi(r=R, theta, t) = A * cos(omega * t) * cos(theta)
+        phi_curr[-1, :] = A * np.cos(omega * n * dt) * np.cos(np.linspace(0, 2 * np.pi, num_theta))
+
+        # Update r
         for i in range(2, num_r - 1):
+            #Update phi
             for j in range(num_theta):
                 # Spatial derivatives
                 d2phi_dr2 = (phi_curr[i + 1, j] - 2 * phi_curr[i, j] + phi_curr[i - 1, j]) / (dr ** 2)
@@ -39,13 +43,11 @@ def fwd_euler(R, A, omega, c, tmax, num_timesteps, num_r, num_theta):
 
                 # Update phi using forward Euler method
                 phi_next = 2 * phi_curr[i, j] - phi_prev[i, j] + dt ** 2 * d2phi_dt2
+                
                 # Update phi for the next time step
                 phi_prev[i, j] = phi_curr[i, j]
                 phi_curr[i, j] = phi_next
         
-
-        # Boundary condition: phi(r=R, theta, t) = A * cos(omega * t) * cos(theta)
-        phi_curr[-1, :] = A * np.cos(omega * n * dt) * np.cos(np.linspace(0, 2 * np.pi, num_theta))
         phi_tot.append(phi_curr)
     # Plot the final state of phi at the last time step
     R_grid, Theta_grid = np.meshgrid(np.linspace(0, R, num_r), np.linspace(0, 2 * np.pi, num_theta))

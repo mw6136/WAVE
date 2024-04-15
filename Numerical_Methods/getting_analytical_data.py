@@ -1,5 +1,7 @@
 from astropy.io import ascii
 import numpy as np
+from tqdm import tqdm
+
 
 ############# doc ############
 """
@@ -53,7 +55,7 @@ def get_anal_data():
 
     # getting the Z data
     Z = np.zeros([N,N,len(times)])
-    for i in list(range(len(times))):
+    for i in tqdm(list(range(len(times)))):
         i += 1
         Zi_ascii = ascii.read("../Analytical_Solution/data/Z" + str(i) + ".txt")
         Zi_data_frame = Zi_ascii.to_pandas()
