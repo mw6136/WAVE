@@ -2,7 +2,7 @@
 
 import imageio
 import os
-import tqdm
+from tqdm import tqdm
 
 # finding how many timesteps (images) exist
 next_one_exists = True
