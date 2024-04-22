@@ -123,7 +123,50 @@ Where formally the constant is limited by the dimensionality of the system $ 1 /
 
 \subsubsection{Implicit (backward difference) methods}
 \subsubsection{Crank–Nicolson scheme}
-To summarize, usually the Crank–Nicolson scheme is the most accurate scheme for small time steps. For larger time steps, the implicit scheme works better since it is less computationally demanding. The explicit scheme is the least accurate and can be unstable, but is also the easiest to implement and the least numerically intensive.
+To summarize, usually the Crank–Nicolson scheme is the most accurate scheme for small timesteps. For larger timesteps, the implicit scheme works better since it is less computationally demanding. The explicit scheme is the least accurate and can be unstable, but is also the easiest to implement and the least numerically intensive.
+
+\newpage
+\subsection{Fourier Spectral Methods}
+
+The wave equation in the frequency domain can be derived by taking the Fourier transform of the wave equation in the spatial domain. A 2-D Fourier transform in polar coordinates is defined as 
+$$ \mathcal{F}(k_r, k_\theta) = \int_0^\infty \int_{-\pi}^\pi f(r, \theta) \exp(-i r k_r \cos(k_\theta - \theta)) r \, dr d\theta $$
+\noindent
+where $k_r$ and $k_\theta$ are the spatial frequency radius and angle. The corresponding 2-D inverse Fourier transform is written
+$$ f(r, \theta) = \frac{1}{(2 \pi)^2} \int_0^\infty \int_{0}^{2\pi} \mathcal{F}(k_r, k_\theta) \exp(i \langle k_r, k_\theta \rangle \cdot \langle r, \theta \rangle) r \, d k_r \, d k_\theta $$
+\noindent
+Therefore the Fourier pair for the 2-D Laplacian in polar coordinates
+$$ \nabla^2 f(r, \theta) = \frac{\partial^2 f}{\partial r^2} + \frac{1}{r} \frac{\partial f}{\partial r} + \frac{1}{r^2} \frac{\partial^2 f}{\partial \theta^2} \quad \longleftrightarrow \quad {k_r}^2 \mathcal{F}(k_r, k_\theta) + \frac{{k_{\theta}}^2}{r^2} \mathcal{F}(k_r, k_\theta) \quad \textrm{.}$$
+\noindent
+By applying the temporal Fourier transform to the scalar wave equation in polar coordinates, the RHS becomes a simple algebraic relation, where $\mathcal{F}(\phi) \equiv \hat{\phi}$. To transform this equation into the frequency domain, we take the Fourier transform of both sides with respect to the spatial coordinates $r$ and $\theta$, while keeping time $t$ unchanged. The Fourier transform of a derivative is given by multiplication by the corresponding frequency---greatly simplifying the calculation of the Laplacian. The wave equation in the frequency domain becomes:
+$$ \frac{{\partial^2 \phi}}{{\partial t^2}} = c^2 \left[ \frac{1}{r} \frac{\partial}{\partial r} \left(r \frac{\partial \phi}{\partial r}\right) + \frac{1}{r^2} \frac{\partial^2 \phi}{\partial \theta^2} \right] \quad \longleftrightarrow \quad \frac{{\partial^2 \hat{\phi}}}{{\partial t^2}} = -c^2 \left( {k_r}^2 \hat{\phi} + \frac{{k_{\theta}}^2}{r^2} \hat{\phi} \right)  \quad \textrm{.}$$
+\noindent
+This equation governs the evolution of the Fourier components of the solution $\hat{\phi}$ with respect to time $t$. Mathematically, this is the \emph{Helmholtz differential equation} in polar coordinates, which represents a time-independent form of the wave equation. In 1-D it is a linear PDE that takes the form of a strict eigenvalue problem $ \nabla^2 f = -k^2 f$ with $k^2$ an eigenvalue (the wave number) and $f$ the eigenfunction.
+\\ \\ \noindent
+The time forcing term $\partial^2 \hat{\phi} / \partial t^2$ can then progress through an iterative scheme. Here, the forward Euler equation is chosen as it is the simplest iterative scheme to implement. In polar coordinates, the discretized finite differences would be as follows:
+$$ \phi_{i,j}^{(n+1)} = 2 \phi_{i,j}^{(n)} - \phi_{i,j}^{(n-1)} + \left( \Delta t \right)^2 \left( c^2 \left[ \frac{1}{r_i} \frac{\partial}{\partial r} \left( r_i \frac{\partial \phi}{\partial r} \right) + \frac{1}{r_i^2} \frac{\partial^2 \phi}{\partial \theta^2} \right] \right)^{(n)} \quad \textrm{,}$$
+\noindent
+where $\phi_{i,j}^{(n)}$ represents the value of $\phi$ at radial grid point $r_i$, angular grid point $\theta_j$, and timestep $t^n$ ($\Delta t$ is the timestep size). This equation updates the solution at each timestep based on the values at the previous timestep and the spatial derivatives of the solution. The equation for updating \( \hat{\phi} \) in the frequency domain is:
+
+$$ \hat{\phi}^{(n+1)} = 2 \hat{\phi}^{(n)} - \hat{\phi}^{(n-1)} + (\Delta t)^2 \left[ -c^2 \left( {k_r}^2 + \frac{{k_{\theta}}^2}{r^2} \right) \right] \hat{\phi}^{(n)} \quad \textrm{.} $$
+\noindent
+This process allows the evolution of the solution in the frequency domain over time, and can then be transformed back to the time domain with the inverse $\mathcal{F}^{-1}(\hat{\phi}) = \phi$. The discrete Fast Fourier Transform (FFT) is computed using the \texttt{SciPy} package in \texttt{Python}. First $k_r$ and $k_\theta$ sample frequencies are computed from the $r_i$, $\theta_j$ discretization using \texttt{fftfreq}. Then the transformed Laplacian is computed algebraically and $\hat{\phi}^{(n)}$ is updated according to the forward Euler scheme, then transformed back into the spatial domain with \texttt{ifft}.
+\newpage
+\begin{lstlisting}[language=Python]
+# Calculate frequencies
+freq_r = fftfreq(num_r, dr)
+freq_theta = fftfreq(num_theta, dtheta)
+
+# Calculate Laplacian in frequency domain
+k_r_squared = (2 * np.pi * freq_r) ** 2
+k_theta_squared = (2 * np.pi * freq_theta) ** 2
+laplacian = -c ** 2 * (k_r_squared[:, np.newaxis] + k_theta_squared)
+
+# Update phi in frequency domain using Forward Euler
+phi_hat_next = 2 * phi_hat_curr - phi_hat_prev + dt ** 2 * laplacian * phi_hat_curr
+
+# Transform back to spatial domain
+phi_next = np.real(ifft(phi_hat_next, axis=0))
+\end{lstlisting}
 
 \newpage
 \subsection{\textbf{Problem Statement}}
