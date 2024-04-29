@@ -3,7 +3,7 @@
 #SBATCH --nodes=1           # number of nodes
 #SBATCH --ntasks-per-node=32  # number of processors per node
 #SBATCH --cpus-per-task=1       # number of cpus per task
-#SBATCH -t 08:30:00      # run for 1 hr max
+#SBATCH -t 1-08:30:00      # run for 1 hr max
 #SBATCH --mail-type=begin   # send email when process begins...
 #SBATCH --mail-type=end     # ...and when it ends...
 #SBATCH --mail-type=fail    # ...or when it fails.
