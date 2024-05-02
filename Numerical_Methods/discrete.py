@@ -9,6 +9,7 @@ import scipy as sp
 import time
 from tqdm import tqdm
 
+start_time = time.time()
 
 ########################### read in data ###########################
 print("Importing analytical data:")
@@ -216,13 +217,13 @@ if False:
 
 ########################### getting numerical data ###########################
 print("Running the numerical simulation:")
-max_time = 2
+max_time = 6.5
 
 Z_DNS_div,times_div = discrete_run(1.6e-4, .05,record_all=True)
 Z_DNS_CFL,times_CFL = discrete_run(1.5e-4, .05,record_all=True)
 Z_DNS_1en4,times_1en4 = discrete_run(1e-4, max_time)
 Z_DNS_1en5,times_1en5 = discrete_run(1e-5, max_time)
-# Z_DNS_1en6,times_1en6 = discrete_run(1e-6, max_time)
+Z_DNS_1en6,times_1en6 = discrete_run(1e-6, max_time)
 # Z_DNS_1en4_long = discrete_run(1e-4, 100)
 
 
@@ -237,7 +238,7 @@ fig.set_figwidth(9)
 # times_here = times[:max_time]
 L2_div, max_e_div, MSE_div, times_div_good = get_errors(Z_DNS_div,timess=times_div)
 L2_CFL, max_e_CFL, MSE_CFL, times_CFL_good = get_errors(Z_DNS_CFL,timess=times_CFL)
-# L2_1en6, max_e_1en6, MSE_1en6,_ = get_errors(Z_DNS_1en6,timess=times)
+L2_1en6, max_e_1en6, MSE_1en6,_ = get_errors(Z_DNS_1en6,timess=times)
 L2_1en5, max_e_1en5, MSE_1en5,_ = get_errors(Z_DNS_1en5,timess=times)
 L2_1en4, max_e_1en4, MSE_1en4,_ = get_errors(Z_DNS_1en4,timess=times)
 
@@ -245,7 +246,7 @@ plt.plot(times_div_good, MSE_div,'k')
 plt.plot(times_CFL_good, MSE_CFL,'-')
 plt.plot(times_1en4, MSE_1en4[1:],'-.')
 plt.plot(times_1en5, MSE_1en5[1:],'--')
-# plt.plot(times, MSE_1en6[1:],':')
+plt.plot(times_1en6, MSE_1en6[1:],':')
 
 
 plt.legend(["dt = 1.6e-4","dt = 1.5e-4","dt = 1e-4","dt = 1e-5", "dt = 1e-6"])
@@ -254,19 +255,6 @@ plt.ylabel("Error")
 plt.ylim([-.01, .31])
 plt.tight_layout()
 plt.savefig("./discrete_misc_files/MSE_comparison.png", dpi = 600)
-
-
-
-
-########################### scaling of delta t ###########################
-xx = np.array([1e-6, 1e-5, 1e-4])
-yy = np.array([16, 2, 0.5])
-
-xxx = np.linspace(1e-6,1e-4,10)
-yyy = 3e-5 * xxx ** (-1)
-
-plt.loglog(xx,yy)
-plt.loglog(xxx,yyy);
 
 
 
@@ -385,3 +373,9 @@ plt.colorbar(im,fraction=0.046, pad=0.04)
 plt.tight_layout()
 plt.savefig("./discrete_misc_files/singularities.png", dpi = 600)
 
+
+
+
+
+
+print("Successfully ran all of discrete.py in " + str(round(time.time() - start_time)) + " seconds")
