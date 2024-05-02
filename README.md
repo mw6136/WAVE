@@ -18,9 +18,10 @@ Numerical methods
 ``fft_solver.py``
 ``fwd_euler.py``
 ``bwd_euler.py``
+``discrete.py``
 
 Analytical solution
-``getting_analytical_data.py``
+``getting_analytical_data.py`` (you can also run ``polar_analytical_solution.py`` to get new analytical data, but this is not reccomended since it takes an extremely long time)
 
 ### Slurm Submission
 There are also varying example slurm scripts that can be run by submitting to the queue.
@@ -28,7 +29,7 @@ There are also varying example slurm scripts that can be run by submitting to th
 #!/bin/bash
 #SBATCH --job-name=       
 #SBATCH --nodes=1              
-#SBATCH --ntasks=1               
+#SBATCH --ntasks=1 0              
 #SBATCH --cpus-per-task=1        
 #SBATCH --mem-per-cpu=8G         
 #SBATCH --time=03:00:00 
