@@ -1,6 +1,7 @@
 from fwd_euler import fwd_euler
 from getting_analytical_data import get_anal_data
 from bwd_euler import bwd_euler
+from RK2 import RK2
 print("Starting running run_cases.py")
 
 '''
@@ -35,6 +36,10 @@ num_t = 1000  # Number of time steps
 #fwd_euler(R, A, omega, c, tmax, num_t, num_r, num_theta)
 #print("Forward Euler completed")
 
-print("Starting running Backward Euler")
-bwd_euler(R, A, omega, c, tmax, num_t, num_r, num_theta)
-print("Forward Euler completed")
+#print("Starting running Backward Euler")
+#bwd_euler(R, A, omega, c, tmax, num_t, num_r, num_theta)
+#print("Forward Euler completed")
+
+print("Starting running RK4")
+RK2(R, A, omega, c, tmax, num_t, num_r, num_theta)
+print("RK4 completed")

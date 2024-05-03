@@ -3,29 +3,40 @@ from scipy.special import jn  # Bessel function of the first kind
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-def step_fwd(num_r, num_theta, phi_prev, phi_curr, dr, dtheta, dt, c):
-        phi_next = np.zeros_like(phi_curr)
-        #update r
+
+
+
+
+def step_RK2(num_r, num_theta, phi_prev, phi_current, dr, dtheta, dt, c):
+        def f(phi_curr, i, j):
+            d2phi_dr2 = (phi_curr[i + 1, j] - 2 * phi_curr[i, j] + phi_curr[i - 1, j]) / (dr ** 2)
+            d2phi_dtheta2 = (phi_curr[i, (j + 1) % num_theta] - 2 * phi_curr[i, j] + phi_curr[i, (j - 1) % num_theta]) / (dtheta ** 2)
+            d2phi_dt2 = c ** 2 * (d2phi_dr2 + 1 / (dr*i)**2 * d2phi_dtheta2)
+            return d2phi_dt2
+        
+        phi_next = np.zeros_like(phi_current)
+        phi_2 = np.zeros_like(phi_current)
+
+        k1_v = np.zeros_like(phi_current)
         for i in range(2, num_r - 1):
             #Update phi
             for j in range(num_theta):
-                # Spatial derivatives
-                d2phi_dr2 = (phi_curr[i + 1, j] - 2 * phi_curr[i, j] + phi_curr[i - 1, j]) / (dr ** 2)
-                d2phi_dtheta2 = (phi_curr[i, (j + 1) % num_theta] - 2 * phi_curr[i, j] + phi_curr[i, (j - 1) % num_theta]) / (dtheta ** 2)
+                #k1_x = v
+                k1_v[i,j] = dt * f(phi_current, i, j)
+        phi_2[2: num_r - 1, :] = phi_current[2: num_r - 1, :] + phi_current[2: num_r - 1, :] - phi_prev[2: num_r - 1, :] + dt * k1_v[2: num_r - 1, :]
 
-                # Temporal derivative
-                d2phi_dt2 = c ** 2 * (d2phi_dr2 + 1 / (dr*i)**2 * d2phi_dtheta2)
+        k2_v = np.zeros_like(phi_current)
+        for i in range(2, num_r - 1):
+            #Update phi
+            for j in range(num_theta):
+                #k1_x = v
+                k2_v[i,j] = dt/2 * f(phi_2, i, j)
 
-                # Update phi using forward Euler method
-                phi_next_val = 2 * phi_curr[i, j] - phi_prev[i, j] + dt ** 2 * d2phi_dt2
-                
-                # Update phi for the next time step
-                #phi_prev[i, j] = phi_curr[i, j]
-                phi_next[i, j] = phi_next_val
-        return phi_curr, phi_next
+        phi_next[2: num_r - 1, :] = phi_current[2: num_r - 1, :] + phi_2[2: num_r - 1, :] - phi_current[2: num_r - 1, :] + dt/2 * k2_v[2: num_r - 1, :]
+        return phi_current, phi_next
 
 
-def fwd_euler(R, A, omega, c, tmax, num_timesteps, num_r, num_theta):
+def RK2(R, A, omega, c, tmax, num_timesteps, num_r, num_theta):
     # Parameters
 
     dt = tmax/num_timesteps  # Time step size
@@ -50,8 +61,9 @@ def fwd_euler(R, A, omega, c, tmax, num_timesteps, num_r, num_theta):
     for n in tqdm(range(1, num_timesteps + 1)):
         
 
-        phi_curr, phi_next = step_fwd(num_r, num_theta, phi_prev, phi_curr, dr, dtheta, dt, c)
+        phi_curr, phi_next = step_RK2(num_r, num_theta, phi_prev, phi_curr, dr, dtheta, dt, c)
         
+      #  print(np.max(np.abs(phi_curr - phi_next)))
         #Apply BC: phi(r=0, theta, t) is finite
         phi_next[0,:] = 0
         # Boundary condition: phi(r=R, theta, t) = A * cos(omega * t) * cos(theta)
