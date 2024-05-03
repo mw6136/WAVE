@@ -107,3 +107,42 @@ def get_anal_data_specific_time(time):
     Z = Zi
 
     return N,times,rs_linspace,thetas_linspace,rs,thetas,Z
+
+
+def get_anal_data_long():
+    # relative paths to the analytical data (except Z)
+    times_ascii = ascii.read("../Analytical_Solution/data/times.txt")
+    r_ascii = ascii.read("../Analytical_Solution/data/r_data.txt")
+    theta_ascii = ascii.read("../Analytical_Solution/data/theta_data.txt")
+
+    # Convert table to dataframe (except Z)
+    times_data_frame = times_ascii.to_pandas()
+    r_data_frame = r_ascii.to_pandas()
+    theta_data_frame = theta_ascii.to_pandas()
+
+
+    # Convert the dataframe to an np array (except Z)
+    times = np.array(times_data_frame.values)
+    rs = np.array(r_data_frame.values)
+    thetas = np.array(theta_data_frame.values)
+
+    # obtaining N
+    N = np.shape(rs)[0]
+
+    # make linspaces
+    rs_linspace = np.linspace(0,1,N)
+    thetas_linspace = np.linspace(0,2*np.pi,N)
+
+    # fixing the weird formatting of times
+    times = times[0]
+
+    # getting the Z data
+    Z = np.zeros([N,N,3])
+    for i in tqdm(list(range(3))):
+        i += 1
+        Zi_ascii = ascii.read("../Analytical_Solution/data_98-100/Z" + str(i) + ".txt")
+        Zi_data_frame = Zi_ascii.to_pandas()
+        Zi = np.array(Zi_data_frame.values)
+        Z[:,:,i-1] = Zi
+
+    return N,times,rs_linspace,thetas_linspace,rs,thetas,Z

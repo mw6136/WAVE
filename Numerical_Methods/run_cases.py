@@ -1,3 +1,5 @@
+print("Starting running run_cases.py")
+
 from fwd_euler import fwd_euler
 from getting_analytical_data import get_anal_data
 from bwd_euler import bwd_euler
@@ -32,14 +34,16 @@ num_theta = 100  # Number of angular grid points
 num_t = 1000  # Number of time steps
 
 
-#print("Starting running Forward Euler")
-#fwd_euler(R, A, omega, c, tmax, num_t, num_r, num_theta)
-#print("Forward Euler completed")
-
-#print("Starting running Backward Euler")
-#bwd_euler(R, A, omega, c, tmax, num_t, num_r, num_theta)
-#print("Forward Euler completed")
+print("Starting running Forward Euler")
+fwd_euler(R, A, omega, c, tmax, num_t, num_r, num_theta)
+print("Forward Euler completed")
 
 print("Starting running RK4")
 RK2(R, A, omega, c, tmax, num_t, num_r, num_theta)
 print("RK4 completed")
+
+print("Starting running discrete")
+with open("discrete.py") as file:
+    exec(file.read())
+print("Forward Euler discrete")
+
