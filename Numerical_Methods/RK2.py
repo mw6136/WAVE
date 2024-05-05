@@ -18,28 +18,28 @@ def step_RK2(num_r, num_theta, phi_prev, phi_current, dr, dtheta, dt, c):
         phi_2 = np.zeros_like(phi_current)
 
         k1_v = np.zeros_like(phi_current)
-        for i in range(2, num_r - 1):
+        for i in range(5, num_r - 1):
             #Update phi
             for j in range(num_theta):
                 #k1_x = v
                 k1_v[i,j] = dt * f(phi_current, i, j)
-        phi_2[2: num_r - 1, :] = phi_current[2: num_r - 1, :] + phi_current[2: num_r - 1, :] - phi_prev[2: num_r - 1, :] + dt * k1_v[2: num_r - 1, :]
+        phi_2[2: num_r - 1, :] = phi_current[2: num_r - 1, :] + (phi_current[2: num_r - 1, :] - phi_prev[2: num_r - 1, :])/2 + dt/4 * k1_v[2: num_r - 1, :]
 
         k2_v = np.zeros_like(phi_current)
-        for i in range(2, num_r - 1):
+        for i in range(5, num_r - 1):
             #Update phi
             for j in range(num_theta):
                 #k1_x = v
-                k2_v[i,j] = dt/2 * f(phi_2, i, j)
+                k2_v[i,j] = dt * f(phi_2, i, j)
 
-        phi_next[2: num_r - 1, :] = phi_current[2: num_r - 1, :] + phi_2[2: num_r - 1, :] - phi_current[2: num_r - 1, :] + dt/2 * k2_v[2: num_r - 1, :]
+        #k = (k1_v + k2_v)/2
+        phi_next[2: num_r - 1, :] = phi_current[2: num_r - 1, :] + (phi_current[2: num_r - 1, :] - phi_prev[2: num_r - 1, :]) + dt * k1_v[2: num_r - 1, :]
         return phi_current, phi_next
 
 
 def RK2(R, A, omega, c, tmax, num_timesteps, num_r, num_theta):
     # Parameters
-
-    dt = tmax/num_timesteps  # Time step size
+    dt = tmax/num_timesteps*1.01  # Time step size
     dr = R / (num_r - 1)  # Radial step size
     dtheta = 2 * np.pi / num_theta  # Angular step size
 
@@ -87,3 +87,4 @@ def RK2(R, A, omega, c, tmax, num_timesteps, num_r, num_theta):
     plt.ylabel('Y')
     plt.axis('equal')
     plt.show()
+    return phi_next

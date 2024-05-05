@@ -6,7 +6,7 @@ from tqdm import tqdm
 def step_fwd(num_r, num_theta, phi_prev, phi_curr, dr, dtheta, dt, c):
         phi_next = np.zeros_like(phi_curr)
         #update r
-        for i in range(2, num_r - 1):
+        for i in range(4, num_r - 1):
             #Update phi
             for j in range(num_theta):
                 # Spatial derivatives
@@ -75,3 +75,4 @@ def fwd_euler(R, A, omega, c, tmax, num_timesteps, num_r, num_theta):
     plt.ylabel('Y')
     plt.axis('equal')
     plt.show()
+    return phi_next
