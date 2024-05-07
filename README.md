@@ -11,7 +11,7 @@
 
 ## Running the code
 Base script
-``run_cases.py``
+``run_cases.py``, can be run with `python ./Numerical_Methods/run_cases.py` when in the `/WAVE/` directory
 
 Numerical methods
 ``iterative_methods.py``
@@ -41,11 +41,3 @@ RUNNAME=""
 
 ####################################################################################
 ```
-
-## Solver information (and citation)
-
-The solvers implemented in `WAVE` solve the scalar wave equation in cylindrical coordinates using forward and backward Euler methods, Fourier spectral methods, and various iterative methods.
-
-[1] .
-
-[2] .
