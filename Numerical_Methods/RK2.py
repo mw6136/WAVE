@@ -33,13 +33,13 @@ def step_RK2(num_r, num_theta, phi_prev, phi_current, dr, dtheta, dt, c):
                 k2_v[i,j] = dt * f(phi_2, i, j)
 
         #k = (k1_v + k2_v)/2
-        phi_next[2: num_r - 1, :] = phi_current[2: num_r - 1, :] + (phi_current[2: num_r - 1, :] - phi_prev[2: num_r - 1, :]) + dt * k1_v[2: num_r - 1, :]
+        phi_next[2: num_r - 1, :] = phi_current[2: num_r - 1, :] + (phi_2[2: num_r - 1, :] - phi_current[2: num_r - 1, :])*2 + dt * k2_v[2: num_r - 1, :]
         return phi_current, phi_next
 
 
 def RK2(R, A, omega, c, tmax, num_timesteps, num_r, num_theta):
     # Parameters
-    dt = tmax/num_timesteps*1.01  # Time step size
+    dt = tmax/num_timesteps  # Time step size
     dr = R / (num_r - 1)  # Radial step size
     dtheta = 2 * np.pi / num_theta  # Angular step size
 
