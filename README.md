@@ -14,7 +14,7 @@ where the driving force of the wave motion for a material initially at rest can 
 Boundary Conditions: \
 $\phi(r=R, \theta, t) = A \cos(\omega t) \cos (\theta)$ \
 $\phi(r=0, \theta, t) \rightarrow \textrm{finite}$ \
-$\phi(r, \theta + 2\pi, t) = \phi(r, \theta, t)$ \
+$\phi(r, \theta + 2\pi, t) = \phi(r, \theta, t)$
 
 Initial Conditions: \
 $\phi(r, \theta, t=0) = 0$ \
@@ -41,7 +41,7 @@ Numerical methods\
 Comparison data from the analytical solution is obtained from ``getting_analytical_data.py`` (you can also run ``polar_analytical_solution.py`` to get new analytical data, but this is not recommended since it takes an extremely long time)
 
 ### Slurm Submission
-The Princeton high-performance CPU clusters ([TIGER](https://researchcomputing.princeton.edu/systems/tiger) or [ADROIT](https://researchcomputing.princeton.edu/systems/adroit)) may be used by submitting a job with Slurm Workload Manager. Below is a sample Slurm script for running the Python code using a Conda environment:
+The Princeton high-performance CPU clusters ([TIGER](https://researchcomputing.princeton.edu/systems/tiger) or [ADROIT](https://researchcomputing.princeton.edu/systems/adroit)) may be used by submitting a job with Slurm Workload Manager. Below is a sample Slurm script for running the ``Python`` code using a ``Conda`` environment:
 ```
 #!/bin/bash
 #SBATCH --job-name=myjob         # create a short name for your job
@@ -60,14 +60,14 @@ conda activate pytools-env
 
 python run_cases.py
 ```
-The first line of the Slurm script specifies the Unix shell to be used. This is followed by a series of ``#SBATCH`` directives which set the resource requirements and other parameters of the job. The script above requests 1 CPU-core and 4 GB of memory for 1 hour of run time. The necessary changes to the environment are made by loading the anaconda3/<version> environment module and activating a particular Conda environment. The execution of the Python script is specified in the final line.
+The first line of the Slurm script specifies the Unix shell to be used. This is followed by a series of ``#SBATCH`` directives which set the resource requirements and other parameters of the job. The script above requests 1 CPU-core and 4 GB of memory for 1 hour of run time. The necessary changes to the environment are made by loading the anaconda3/<version> environment module and activating a particular Conda environment. The execution of the ``Python`` script is specified in the final line.
 
 A job script named ``job.slurm`` is submitted to the Slurm scheduler with the ``sbatch`` command:
 
 ``$ sbatch job.slurm``
 
 ## Numerical Implementation (and citation)
-The numerical approaches implemented in WAVE include Fourier spectral methods [1,2], finite-difference discretization [3], forward Euler, and 2nd-order Runge-Kutta. The analytical solution was developed using a method of separation of variables and eigenfunction expansion.
+The numerical approaches implemented in ``WAVE`` include Fourier spectral methods [1,2], finite-difference discretization [3], forward Euler, and 2nd-order Runge-Kutta. The analytical solution was developed using a method of separation of variables and eigenfunction expansion.
 
 [1] B. Costa. Spectral methods for partial differential equations. *CUBO, A Mathematical Journal*, 6(4):1–32, Dec 2004.
 
